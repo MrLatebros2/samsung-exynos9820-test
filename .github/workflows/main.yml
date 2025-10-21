@@ -3,7 +3,7 @@ name: Build
 on: [push]
 
 env:
-  TOOLCHAIN: cruel
+  TOOLCHAIN: default
   INSTALLER: yes
 
 jobs:
@@ -16,8 +16,8 @@ jobs:
         model: [ "G970F,G973F,G975F" ]
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.7'
 
@@ -42,7 +42,7 @@ jobs:
           echo "KEY=$KEY" >> $GITHUB_ENV
 
       - name: Cache ccache files
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.ccache
           key: ccache-${{ env.TOOLCHAIN }}-${{ env.KEY }}-${{ env.FULL_DATE }}
@@ -58,7 +58,7 @@ jobs:
                        model=${{ matrix.model }} \
                        name="Cruel-K-devel"        \
                        toolchain=$TOOLCHAIN      \
-                       -magisk                   \
+                       +magisk                   \
                        +nohardening              \
                        +ttl                      \
                        +wireguard                \
@@ -68,8 +68,8 @@ jobs:
                        +force_dex_wqhd           \
                        +morosound                \
                        +boeffla_wl_blocker       \
-                       +overlayfs                \
-                       +kernelsu                 \
+                       -overlayfs                \
+                       -kernelsu                 \
           2>&1 | tee config.info
 
       - name: Install gcc-aarch64-linux-gnu
